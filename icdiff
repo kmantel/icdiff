@@ -210,6 +210,7 @@ class ConsoleDiff(object):
 
             # scan text looking for the wrap point, keeping track if the wrap
             # point is inside markers
+            in_control_char=False
             i = 0
             n = 0
             mark = ""
@@ -221,6 +222,13 @@ class ConsoleDiff(object):
                 elif text[i] == "\1":
                     i += 1
                     mark = ""
+                elif text[i] == "\x1b":
+                    in_control_char = True
+                    i += 1
+                elif in_control_char:
+                    if text[i] == 'm':
+                        in_control_char = False
+                    i += 1
                 else:
                     n += self._display_len(text[i])
                     i += 1
